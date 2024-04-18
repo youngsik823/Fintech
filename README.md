@@ -41,5 +41,6 @@ CRUD를 활용한 계좌 관리 시스템 API
 
 
 ## [ERD 데이터 모델링]
+![erd](https://github.com/youngsik823/Fintech/assets/109953656/30693c84-4dd6-4fcd-8fee-a59b54e12c1b)
 
 
