@@ -20,15 +20,20 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
+
 public class TokenProvider {
   private static final String KEY_GRADE = "role";
 
-  @Value("{spring.jwt.secret}")
+  @Value("${spring.jwt.secret}")
   private String SECRET_KEY;
 
-  private final AccountUserService accountUserService;
+  private AccountUserService accountUserService;
 
-  public String generateToken(AccountUser accountUser) {
+  public void setAccountUserService(AccountUserService accountUserService) {
+    this.accountUserService = accountUserService;
+  }
+
+  public String createToken(AccountUser accountUser) {
     Map<String, Object> claims = new HashMap<>();
     claims.put("email", accountUser.getEmail());
     claims.put("role", accountUser.getRole());
@@ -58,6 +63,7 @@ public class TokenProvider {
   public String getUsername(String token) {
     return perseClaims(token).getSubject();
   }
+
   public boolean validateToken(String token) {
     if (!StringUtils.hasText(token)) {
       return false;
