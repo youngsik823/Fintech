@@ -1,6 +1,5 @@
 package com.ys.Fintech.accountUser.service;
 
-import com.ys.Fintech.accountUser.domain.AccountUser;
 import com.ys.Fintech.accountUser.domain.Role;
 import com.ys.Fintech.accountUser.dto.request.SignUpRequestDTO;
 import com.ys.Fintech.accountUser.dto.response.SignUpResponseDTO;
@@ -11,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional

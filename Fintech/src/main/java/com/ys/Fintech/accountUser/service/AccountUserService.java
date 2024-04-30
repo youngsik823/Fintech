@@ -7,15 +7,23 @@ import com.ys.Fintech.accountUser.repository.AccountUserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
-public class AccountUserService {
+public class AccountUserService implements UserDetailsService {
   private final AccountUserRepository accountUserRepository;
 
+  @Override
+  public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
+    return accountUserRepository.findByName(name)
+        .orElseThrow(() -> new UsernameNotFoundException("couldn't find accountUser -> " + name));
+  }
   // 회원가입
   public SignUpResponseDTO SignUp(SignUpRequestDTO signUpRequestDTO) throws Exception {
     if (signUpRequestDTO == null) {
