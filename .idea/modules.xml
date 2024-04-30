@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/Fintech.iml" filepath="$PROJECT_DIR$/.idea/Fintech.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.ys.Fintech.main.iml" filepath="$PROJECT_DIR$/.idea/modules/com.ys.Fintech.main.iml" />
     </modules>
   </component>
 </project>

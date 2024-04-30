@@ -7,8 +7,12 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -17,7 +21,7 @@ import java.time.LocalDateTime;
 @Builder
 @Entity
 @DynamicInsert
-public class AccountUser {
+public class AccountUser implements UserDetails {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "account_user_id")
@@ -46,4 +50,34 @@ public class AccountUser {
 
   @UpdateTimestamp
   private LocalDateTime updatedAt;
+
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    return List.of();
+  }
+
+  @Override
+  public String getUsername() {
+    return "";
+  }
+
+  @Override
+  public boolean isAccountNonExpired() {
+    return false;
+  }
+
+  @Override
+  public boolean isAccountNonLocked() {
+    return false;
+  }
+
+  @Override
+  public boolean isCredentialsNonExpired() {
+    return false;
+  }
+
+  @Override
+  public boolean isEnabled() {
+    return false;
+  }
 }

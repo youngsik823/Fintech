@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
+@Setter
 @Slf4j
 
 public class SignUpRequestDTO {
