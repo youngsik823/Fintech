@@ -1,84 +1,75 @@
 package com.ys.Fintech.security;
 
 import com.ys.Fintech.accountUser.domain.AccountUser;
-import com.ys.Fintech.accountUser.service.AccountUserService;
+import com.ys.Fintech.accountUser.domain.Role;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-
+@Slf4j
 public class TokenProvider {
-  private static final String KEY_GRADE = "role";
 
   @Value("${spring.jwt.secret}")
   private String SECRET_KEY;
 
-  private AccountUserService accountUserService;
-
-  public void setAccountUserService(AccountUserService accountUserService) {
-    this.accountUserService = accountUserService;
-  }
-
   public String createToken(AccountUser accountUser) {
     Map<String, Object> claims = new HashMap<>();
     claims.put("email", accountUser.getEmail());
+    claims.put("phoneNum", accountUser.getPhoneNum());
+    claims.put("name", accountUser.getName());
     claims.put("role", accountUser.getRole());
 
-    Date expiry = Date.from(
-        Instant.now().plus(1, ChronoUnit.HOURS) // 현재 시간으로부터 1시간
-    );
+    Date expiry = new Date(System.currentTimeMillis() + 3600000); // 1시간 후 만료
 
     return Jwts.builder()
-        .signWith(SignatureAlgorithm.HS512, Keys.hmacShaKeyFor(SECRET_KEY.getBytes()))
-        .setIssuer("youngsik")  // 발급자 정보
-        .setIssuedAt(new Date())  // 토큰 생성시간
-        .setExpiration(expiry)  // 토큰 만료시간
-        .setSubject(String.valueOf(accountUser.getId())) // 토큰을 식별할 수 있는 주요데이터
-        .setClaims(claims) //데이터 추가
+        .signWith(Keys.hmacShaKeyFor(SECRET_KEY.getBytes()), SignatureAlgorithm.HS512)
+        .addClaims(claims)
+        .setIssuer("youngsik")
+        .setIssuedAt(new Date())
+        .setExpiration(expiry)
+        .setSubject(String.valueOf(accountUser.getId()))
         .compact();
-
   }
 
-  public Authentication getAuthentication(String jwt) {
-    UserDetails userDetails = accountUserService.loadUserByUsername(getUsername(jwt));
+//  public boolean validateToken(String token) {
+//    if (!StringUtils.hasText(token)) {
+//      return false;
+//    }
+//    try {
+//      Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
+//      return true;
+//    } catch (ExpiredJwtException e) {
+//      log.debug("Token expired: {}", e.getMessage());
+//      return false;
+//    } catch (JwtException e) {
+//      log.debug("Invalid token: {}", e.getMessage());
+//      return false;
+//    }
+//  }
 
-    // 사용자 정보와 사용자 권한 정보를 포함
-    return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-  }
+  public TokenAccountUserInfo getTokenAccountUserInfo(String token) {
+    log.info("tttt {} ", token);
+      Claims claims = Jwts.parser().setSigningKey(Keys.hmacShaKeyFor(SECRET_KEY.getBytes())).parseClaimsJws(token).getBody();
 
-  public String getUsername(String token) {
-    return perseClaims(token).getSubject();
-  }
+    log.info("claims : {}",claims);
 
-  public boolean validateToken(String token) {
-    if (!StringUtils.hasText(token)) {
-      return false;
-    }
-    Claims claims = perseClaims(token);
-    return claims.getExpiration().before(new Date()); // 토큰 만료시간 검증
-  }
+      return TokenAccountUserInfo.builder()
+          .id(Long.valueOf(claims.getSubject()))
+          .email(claims.get("email", String.class))
+          .phoneNum(claims.get("phoneNum", String.class))
+          .name(claims.get("name", String.class))
+          .role(Role.valueOf(claims.get("role", String.class)))
+          .build();
 
-  // token 유효성 검사
-  private Claims perseClaims(String token) {
-    try {
-      return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token)
-          .getBody();
-    } catch (ExpiredJwtException e) {
-      return e.getClaims();
-    }
   }
 }
