@@ -1,5 +1,6 @@
 package com.ys.Fintech.accountUser.domain;
 
+import com.ys.Fintech.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
@@ -21,10 +22,10 @@ import java.util.List;
 @Builder
 @Entity
 @DynamicInsert
-public class AccountUser implements UserDetails {
+public class AccountUser extends BaseEntity implements UserDetails {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "account_user_id")
+//  @Column(name = "account_user_id")
   private Long id;
 
   @Email
@@ -45,11 +46,6 @@ public class AccountUser implements UserDetails {
   @ColumnDefault("'USER'")
   private Role role;
 
-  @CreationTimestamp
-  private LocalDateTime createdAt;
-
-  @UpdateTimestamp
-  private LocalDateTime updatedAt;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
