@@ -1,11 +1,14 @@
 package com.ys.Fintech.accountUser.service;
 
 import com.ys.Fintech.accountUser.domain.AccountUser;
+import com.ys.Fintech.accountUser.dto.request.AccountUserModifyRequestDTO;
 import com.ys.Fintech.accountUser.dto.request.SignInRequestDTO;
 import com.ys.Fintech.accountUser.dto.request.SignUpRequestDTO;
+import com.ys.Fintech.accountUser.dto.response.AccountUserModifyResponseDTO;
 import com.ys.Fintech.accountUser.dto.response.SignInResponseDTO;
 import com.ys.Fintech.accountUser.dto.response.SignUpResponseDTO;
 import com.ys.Fintech.accountUser.repository.AccountUserRepository;
+import com.ys.Fintech.security.TokenAccountUserInfo;
 import com.ys.Fintech.security.TokenProvider;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +35,7 @@ public class AccountUserService implements UserDetailsService {
   }
 
   // 회원가입
-  public SignUpResponseDTO SignUp(SignUpRequestDTO signUpRequestDTO) throws Exception {
+  public SignUpResponseDTO signUp(SignUpRequestDTO signUpRequestDTO) throws Exception {
     if (signUpRequestDTO == null) {
       throw new RuntimeException("가입 정보가 없습니다.");
     }
@@ -52,7 +55,7 @@ public class AccountUserService implements UserDetailsService {
 
   // 로그인 검증
   public SignInResponseDTO verifyLogin(SignInRequestDTO signInRequestDTO){
-    AccountUser accountUser = accountUserRepository.findByEmail(signInRequestDTO.getEmail())
+  AccountUser accountUser = accountUserRepository.findByEmail(signInRequestDTO.getEmail())
         .orElseThrow(() -> new RuntimeException("가입된 회원이 아닙니다."));
 
     // 패스워드 검증
@@ -64,7 +67,21 @@ public class AccountUserService implements UserDetailsService {
     }
 
     String token = tokenProvider.createToken(accountUser);
+    log.info("Login token -- {}", token);
     return new SignInResponseDTO(accountUser, token);
+  }
+
+  // 회원 정보 수정 (이름, 전화번호)
+  public AccountUserModifyResponseDTO accountUserModify(AccountUserModifyRequestDTO accountUserModifyRequestDTO, TokenAccountUserInfo accountUserInfo) {
+
+    AccountUser accountUser = accountUserRepository.findById(accountUserInfo.getId()).orElseThrow(
+        () -> new RuntimeException("회원이 존재하지 않습니다."));
+    log.info("accountUser----{}", accountUser);
+    AccountUser modifyAccountUser = accountUserModifyRequestDTO.modifyAccountUser(accountUser, accountUserModifyRequestDTO);
+    log.info("modifyAccountUser---------{}", modifyAccountUser);
+    AccountUser save = accountUserRepository.save(modifyAccountUser);
+    log.info("save---- {}", save);
+    return new AccountUserModifyResponseDTO(save);
   }
 
 
