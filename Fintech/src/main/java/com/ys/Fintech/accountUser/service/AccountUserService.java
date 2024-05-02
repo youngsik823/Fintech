@@ -1,6 +1,7 @@
 package com.ys.Fintech.accountUser.service;
 
 import com.ys.Fintech.accountUser.domain.AccountUser;
+import com.ys.Fintech.accountUser.dto.request.AccountUserDeleteRequestDTO;
 import com.ys.Fintech.accountUser.dto.request.AccountUserModifyRequestDTO;
 import com.ys.Fintech.accountUser.dto.request.SignInRequestDTO;
 import com.ys.Fintech.accountUser.dto.request.SignUpRequestDTO;
@@ -85,4 +86,21 @@ public class AccountUserService implements UserDetailsService {
   }
 
 
+  // 회원 정보 삭제
+  public boolean accountUserDelete(AccountUserDeleteRequestDTO accountUserDeleteRequestDTO, TokenAccountUserInfo accountUserInfo) {
+
+    AccountUser accountUser = accountUserRepository.findById(accountUserInfo.getId()).orElseThrow(
+        () -> new RuntimeException("회원이 존재하지 않습니다.")
+    );
+    if (!accountUser.getEmail().equals(accountUserDeleteRequestDTO.getEmail())) {
+      throw new RuntimeException("이메일이 일치하지 않습니다.");
+    }
+
+    String encodedPassword = accountUser.getPassword(); // 현제 db에 저장된 값
+    if (!encoder.matches(accountUserDeleteRequestDTO.getPassword(), encodedPassword)) {
+      throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+    }
+    accountUserRepository.deleteById(accountUserInfo.getId());
+    return true;
+  }
 }

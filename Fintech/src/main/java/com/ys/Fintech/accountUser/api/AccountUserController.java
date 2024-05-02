@@ -1,5 +1,6 @@
 package com.ys.Fintech.accountUser.api;
 
+import com.ys.Fintech.accountUser.dto.request.AccountUserDeleteRequestDTO;
 import com.ys.Fintech.accountUser.dto.request.AccountUserModifyRequestDTO;
 import com.ys.Fintech.accountUser.dto.request.SignInRequestDTO;
 import com.ys.Fintech.accountUser.dto.request.SignUpRequestDTO;
@@ -76,8 +77,6 @@ public class AccountUserController {
       , @AuthenticationPrincipal TokenAccountUserInfo accountUserInfo
       , BindingResult result
   ) {
-    log.info("tokenInfo ----------------{}", accountUserInfo);
-    log.info("accountUserModify ----------------{}", accountUserModifyRequestDTO);
     try {
       ResponseEntity<List<FieldError>> validatedResult = getValidatedResult(result);
       if (validatedResult != null) {
@@ -87,6 +86,26 @@ public class AccountUserController {
           = accountUserService.accountUserModify(accountUserModifyRequestDTO, accountUserInfo);
 
       return ResponseEntity.ok().body(accountUserModifyResponseDTO);
+    } catch (Exception e) {
+      return ResponseEntity.badRequest().body(e.getMessage());
+    }
+  }
+
+  // 회원 정보 삭제
+  @DeleteMapping("/delete")
+  public ResponseEntity<?> deleteAccountUser(
+      @RequestBody @Validated AccountUserDeleteRequestDTO accountUserDeleteRequestDTO
+      , @AuthenticationPrincipal TokenAccountUserInfo accountUserInfo
+      , BindingResult result
+      ) {
+
+    try {
+    ResponseEntity<List<FieldError>> validatedResult = getValidatedResult(result);
+    if (validatedResult != null) {
+      return validatedResult;
+    }
+    boolean value = accountUserService.accountUserDelete(accountUserDeleteRequestDTO, accountUserInfo);
+      return ResponseEntity.ok().body(value);
     } catch (Exception e) {
       return ResponseEntity.badRequest().body(e.getMessage());
     }
