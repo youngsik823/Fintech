@@ -12,8 +12,6 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(CustomException.class)
   protected ResponseEntity<ErrorResponse> handleBusinessException(CustomException e) {
     log.error("customException is occurred. ", e);
-    ErrorResponse errorResponse = new ErrorResponse();
-
     return ResponseEntity.status(e.getHttpStatus()).body(new ErrorResponse(e.getErrorCode(), e.getErrorCode().getCode(), e.getHttpStatus(), e.getErrorMessage()));
   }
 
