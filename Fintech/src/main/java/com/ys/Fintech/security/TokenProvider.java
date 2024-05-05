@@ -40,24 +40,8 @@ public class TokenProvider {
         .compact();
   }
 
-//  public boolean validateToken(String token) {
-//    if (!StringUtils.hasText(token)) {
-//      return false;
-//    }
-//    try {
-//      Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
-//      return true;
-//    } catch (ExpiredJwtException e) {
-//      log.debug("Token expired: {}", e.getMessage());
-//      return false;
-//    } catch (JwtException e) {
-//      log.debug("Invalid token: {}", e.getMessage());
-//      return false;
-//    }
-//  }
 
   public TokenAccountUserInfo getTokenAccountUserInfo(String token) {
-    log.info("tttt {} ", token);
       Claims claims = Jwts.parser().setSigningKey(Keys.hmacShaKeyFor(SECRET_KEY.getBytes())).parseClaimsJws(token).getBody();
 
     log.info("claims : {}",claims);

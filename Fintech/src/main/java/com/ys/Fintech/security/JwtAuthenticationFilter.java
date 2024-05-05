@@ -60,7 +60,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     filterChain.doFilter(request, response);
   }
 
-  private String resolveTokenFromRequest(HttpServletRequest request) {
+  public String resolveTokenFromRequest(HttpServletRequest request) {
     String token = request.getHeader(TOKEN_HEADER);
     log.info("tokenInfo --- {}", token);
     if (StringUtils.hasText(token) && token.startsWith(TOKEN_PREFIX)) {
