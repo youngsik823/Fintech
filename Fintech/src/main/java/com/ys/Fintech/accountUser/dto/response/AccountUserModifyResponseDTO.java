@@ -2,8 +2,6 @@ package com.ys.Fintech.accountUser.dto.response;
 
 import com.ys.Fintech.accountUser.domain.AccountUser;
 import com.ys.Fintech.accountUser.domain.Role;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
 @Getter

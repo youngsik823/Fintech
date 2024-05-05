@@ -1,6 +1,5 @@
 package com.ys.Fintech.exception;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import java.util.List;
