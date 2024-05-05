@@ -9,6 +9,8 @@ import com.ys.Fintech.accountUser.dto.response.AccountUserModifyResponseDTO;
 import com.ys.Fintech.accountUser.dto.response.SignInResponseDTO;
 import com.ys.Fintech.accountUser.dto.response.SignUpResponseDTO;
 import com.ys.Fintech.accountUser.repository.AccountUserRepository;
+import com.ys.Fintech.exception.CustomException;
+import com.ys.Fintech.exception.ErrorCode;
 import com.ys.Fintech.security.TokenAccountUserInfo;
 import com.ys.Fintech.security.TokenProvider;
 import jakarta.transaction.Transactional;
@@ -36,16 +38,16 @@ public class AccountUserService implements UserDetailsService {
   }
 
   // 회원가입
-  public SignUpResponseDTO signUp(SignUpRequestDTO signUpRequestDTO) throws Exception {
+  public SignUpResponseDTO signUp(SignUpRequestDTO signUpRequestDTO) {
     if (signUpRequestDTO == null) {
-      throw new RuntimeException("가입 정보가 없습니다.");
+      throw new CustomException(ErrorCode.MISSING_REQUEST_DTO_ERROR);
     }
     // 이메일, 전화번호 중복 확인
     String email = signUpRequestDTO.getEmail();
     String phoneNum = signUpRequestDTO.getPhoneNum();
     boolean exists = accountUserRepository.existsByEmailOrPhoneNum(email, phoneNum);
     if (exists) {
-      throw new Exception("이미 가입된 회원이 있습니다.");
+      throw new CustomException(ErrorCode.EXISTS_USER_EMAIL_OR_PHONE_NUM);
     }
     String encode = encoder.encode(signUpRequestDTO.getPassword()); // 비밀번호를 암호화
     signUpRequestDTO.setPassword(encode);
@@ -57,18 +59,17 @@ public class AccountUserService implements UserDetailsService {
   // 로그인 검증
   public SignInResponseDTO verifyLogin(SignInRequestDTO signInRequestDTO){
   AccountUser accountUser = accountUserRepository.findByEmail(signInRequestDTO.getEmail())
-        .orElseThrow(() -> new RuntimeException("가입된 회원이 아닙니다."));
+        .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXISTS_USER_EMAIL));
 
     // 패스워드 검증
     String inputPassword = signInRequestDTO.getPassword();  // 입력 비번
     String encoderPassword = accountUser.getPassword(); // db에 저장된 비번
 
     if (!encoder.matches(inputPassword, encoderPassword)) {
-      throw new RuntimeException("비밀번호가 틀렸습니다.");
+      throw new CustomException(ErrorCode.NOT_ACCORD_USER_PASSWORD);
     }
 
     String token = tokenProvider.createToken(accountUser);
-    log.info("Login token -- {}", token);
     return new SignInResponseDTO(accountUser, token);
   }
 
@@ -76,12 +77,9 @@ public class AccountUserService implements UserDetailsService {
   public AccountUserModifyResponseDTO accountUserModify(AccountUserModifyRequestDTO accountUserModifyRequestDTO, TokenAccountUserInfo accountUserInfo) {
 
     AccountUser accountUser = accountUserRepository.findById(accountUserInfo.getId()).orElseThrow(
-        () -> new RuntimeException("회원이 존재하지 않습니다."));
-    log.info("accountUser----{}", accountUser);
+        () -> new CustomException(ErrorCode.NOT_EXISTS_USER));
     AccountUser modifyAccountUser = accountUserModifyRequestDTO.modifyAccountUser(accountUser, accountUserModifyRequestDTO);
-    log.info("modifyAccountUser---------{}", modifyAccountUser);
     AccountUser save = accountUserRepository.save(modifyAccountUser);
-    log.info("save---- {}", save);
     return new AccountUserModifyResponseDTO(save);
   }
 
@@ -90,15 +88,15 @@ public class AccountUserService implements UserDetailsService {
   public boolean accountUserDelete(AccountUserDeleteRequestDTO accountUserDeleteRequestDTO, TokenAccountUserInfo accountUserInfo) {
 
     AccountUser accountUser = accountUserRepository.findById(accountUserInfo.getId()).orElseThrow(
-        () -> new RuntimeException("회원이 존재하지 않습니다.")
-    );
+        () -> new CustomException(ErrorCode.NOT_EXISTS_USER));
+
     if (!accountUser.getEmail().equals(accountUserDeleteRequestDTO.getEmail())) {
-      throw new RuntimeException("이메일이 일치하지 않습니다.");
+      throw new CustomException(ErrorCode.NOT_EXISTS_USER_EMAIL);
     }
 
     String encodedPassword = accountUser.getPassword(); // 현제 db에 저장된 값
     if (!encoder.matches(accountUserDeleteRequestDTO.getPassword(), encodedPassword)) {
-      throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+      throw new CustomException(ErrorCode.NOT_ACCORD_USER_PASSWORD);
     }
     accountUserRepository.deleteById(accountUserInfo.getId());
     return true;

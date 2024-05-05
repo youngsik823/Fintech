@@ -8,6 +8,7 @@ import com.ys.Fintech.accountUser.dto.response.AccountUserModifyResponseDTO;
 import com.ys.Fintech.accountUser.dto.response.SignInResponseDTO;
 import com.ys.Fintech.accountUser.dto.response.SignUpResponseDTO;
 import com.ys.Fintech.accountUser.service.AccountUserService;
+import com.ys.Fintech.exception.FieldErrorResponse;
 import com.ys.Fintech.security.TokenAccountUserInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 
 @RestController
 @Slf4j
@@ -34,22 +36,16 @@ public class AccountUserController {
       , BindingResult result
   ) {
 
-    try {
-    ResponseEntity<List<FieldError>> filedErrors = getValidatedResult(result);
-    if (filedErrors != null) {  // valid 검증을 했을때 에러가 있는지 확인
-      return filedErrors;
+      List<FieldError> validatedResult = FieldErrorResponse.getValidatedResult(result);
+      if (validatedResult != null) {  // valid 검증을 했을때 에러가 있는지 확인
+      return ResponseEntity.badRequest().body(validatedResult);
     }
       SignUpResponseDTO signUpResponseDTO = accountUserService.signUp(signUpRequestDTO);
 
       return ResponseEntity
           .ok()
           .body(signUpResponseDTO);
-    } catch (Exception e) {
-      return ResponseEntity
-          .badRequest()
-          .body(e.getMessage());
     }
-  }
 
   // 로그인
   @PostMapping("/signIn")
@@ -57,18 +53,16 @@ public class AccountUserController {
       @RequestBody @Validated SignInRequestDTO signInRequestDTO
       , BindingResult result
   ) {
-    try {
-      ResponseEntity<List<FieldError>> validatedResult = getValidatedResult(result);
+      List<FieldError> validatedResult = FieldErrorResponse.getValidatedResult(result);
       if (validatedResult != null) {
-        return validatedResult;
+        return ResponseEntity.badRequest().body(validatedResult);
       }
+
       SignInResponseDTO signInResponseDTO = accountUserService.verifyLogin(signInRequestDTO);
       log.info("signInResponseDTO  -  {}", signInResponseDTO);
       return ResponseEntity.ok().body(signInResponseDTO);
-    } catch (RuntimeException e) {
-      return ResponseEntity.badRequest().body(e.getMessage());
     }
-  }
+
 
   // 회원가입 수정
   @RequestMapping(value = "/modify", method = {RequestMethod.PUT, RequestMethod.PATCH})
@@ -77,18 +71,16 @@ public class AccountUserController {
       , @AuthenticationPrincipal TokenAccountUserInfo accountUserInfo
       , BindingResult result
   ) {
-    try {
-      ResponseEntity<List<FieldError>> validatedResult = getValidatedResult(result);
-      if (validatedResult != null) {
-        return validatedResult;
+
+      List<FieldError> validatedResult = FieldErrorResponse.getValidatedResult(result);
+      if (validatedResult != null) {  // valid 검증을 했을때 에러가 있는지 확인
+        return ResponseEntity.badRequest().body(validatedResult);
       }
       AccountUserModifyResponseDTO accountUserModifyResponseDTO
           = accountUserService.accountUserModify(accountUserModifyRequestDTO, accountUserInfo);
 
       return ResponseEntity.ok().body(accountUserModifyResponseDTO);
-    } catch (Exception e) {
-      return ResponseEntity.badRequest().body(e.getMessage());
-    }
+
   }
 
   // 회원 정보 삭제
@@ -99,30 +91,14 @@ public class AccountUserController {
       , BindingResult result
       ) {
 
-    try {
-    ResponseEntity<List<FieldError>> validatedResult = getValidatedResult(result);
-    if (validatedResult != null) {
-      return validatedResult;
-    }
+      List<FieldError> validatedResult = FieldErrorResponse.getValidatedResult(result);
+      if (validatedResult != null) {  // valid 검증을 했을때 에러가 있는지 확인
+        return ResponseEntity.badRequest().body(validatedResult);
+      }
     boolean value = accountUserService.accountUserDelete(accountUserDeleteRequestDTO, accountUserInfo);
       return ResponseEntity.ok().body(value);
-    } catch (Exception e) {
-      return ResponseEntity.badRequest().body(e.getMessage());
-    }
+
   }
-
-  private static ResponseEntity<List<FieldError>> getValidatedResult(BindingResult result) {
-    if (result.hasErrors()) { // 입력값이 검증에 걸렸으면
-      List<FieldError> fieldErrors = result.getFieldErrors();
-      for (FieldError fieldError : fieldErrors) {
-        log.warn("invalid client data - {}", fieldError.toString());
-      }
-      return ResponseEntity
-          .badRequest()
-          .body(fieldErrors);
-    }
-    return null;
-  }
-
-
 }
+
+
