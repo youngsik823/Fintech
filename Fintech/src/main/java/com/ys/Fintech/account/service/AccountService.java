@@ -39,8 +39,8 @@ public class AccountService {
     String newAccountNum; // 새 계좌 번호
     while (true) {
       String AppleBankNum = "0823";
-      String middleBankNum = String.valueOf(random.nextInt(10000));
-      String lastBankNum = String.valueOf(random.nextInt(100000));
+      String middleBankNum = String.format("%4d", random.nextInt(10000));
+      String lastBankNum = String.format("%5d", random.nextInt(100000));
       newAccountNum = sb.append(AppleBankNum).append("-").append(middleBankNum).append("-").append(lastBankNum).toString();
       boolean exists = accountRepository.existsByAccountNum(newAccountNum);
       if (!exists) {
