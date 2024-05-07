@@ -11,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AccountUserDeleteRequestDTO {
+public class DeleteAccountUserRequestDTO {
 
   @NotBlank
   @Email
