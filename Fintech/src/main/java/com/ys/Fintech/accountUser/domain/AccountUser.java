@@ -45,7 +45,7 @@ public class AccountUser extends BaseEntity implements UserDetails {
   @ColumnDefault("'USER'")
   private Role role;
 
-  @OneToMany(mappedBy = "accountUser")
+  @OneToMany(mappedBy = "accountUser", cascade = CascadeType.REMOVE)
   List<Account> accounts = new ArrayList<Account>();
 
   @Override
