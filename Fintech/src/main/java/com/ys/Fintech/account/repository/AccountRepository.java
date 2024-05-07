@@ -3,8 +3,6 @@ package com.ys.Fintech.account.repository;
 import com.ys.Fintech.account.domain.Account;
 import com.ys.Fintech.accountUser.domain.AccountUser;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.List;
 import java.util.Optional;
 
 public interface AccountRepository extends JpaRepository<Account, Long> {
