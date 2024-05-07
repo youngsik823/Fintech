@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Random;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -27,14 +29,26 @@ public class AccountService {
   public CreateAccountResponseDTO createAccount(TokenAccountUserInfo accountUserInfo) {
     AccountUser accountUser = accountUserRepository.findById(accountUserInfo.getId())
         .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXISTS_USER));
-    Long accountNum = accountRepository.countByAccountUser(accountUser);
+    Long accountCount = accountRepository.countByAccountUser(accountUser);
 
-    if (accountNum >= 5) {  // 계정이 5개 존재하면 예외처리
+    if (accountCount >= 5) {  // 계정이 5개 존재하면 예외처리
       throw new CustomException(ErrorCode.EXCEED_ACCOUNT_NUM);
     }
-    String newAccountNum = accountRepository.findFirstByOrderByAccountIdDesc()
-        .map(account -> (Integer.parseInt(account.getAccountNum())) + 1 + "")
-        .orElse("1000000000");
+    Random random = new Random();
+    StringBuffer sb = new StringBuffer();
+    String newAccountNum; // 새 계좌 번호
+    while (true) {
+      String AppleBankNum = "0823";
+      String middleBankNum = String.valueOf(random.nextInt(10000));
+      String lastBankNum = String.valueOf(random.nextInt(100000));
+      newAccountNum = sb.append(AppleBankNum).append("-").append(middleBankNum).append("-").append(lastBankNum).toString();
+      boolean exists = accountRepository.existsByAccountNum(newAccountNum);
+      if (!exists) {
+        break;
+      }
+    }
+
+
     Account account = accountRepository.save(
         Account.builder()
             .accountUser(accountUser)
