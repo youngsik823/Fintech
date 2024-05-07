@@ -1,10 +1,10 @@
 package com.ys.Fintech.accountUser.api;
 
-import com.ys.Fintech.accountUser.dto.request.AccountUserDeleteRequestDTO;
-import com.ys.Fintech.accountUser.dto.request.AccountUserModifyRequestDTO;
+import com.ys.Fintech.accountUser.dto.request.DeleteAccountUserRequestDTO;
+import com.ys.Fintech.accountUser.dto.request.ModifyAccountUserRequestDTO;
 import com.ys.Fintech.accountUser.dto.request.SignInRequestDTO;
 import com.ys.Fintech.accountUser.dto.request.SignUpRequestDTO;
-import com.ys.Fintech.accountUser.dto.response.AccountUserModifyResponseDTO;
+import com.ys.Fintech.accountUser.dto.response.ModifyAccountUserResponseDTO;
 import com.ys.Fintech.accountUser.dto.response.SignInResponseDTO;
 import com.ys.Fintech.accountUser.dto.response.SignUpResponseDTO;
 import com.ys.Fintech.accountUser.service.AccountUserService;
@@ -67,7 +67,7 @@ public class AccountUserController {
   // 회원가입 수정
   @RequestMapping(value = "/modify", method = {RequestMethod.PUT, RequestMethod.PATCH})
   public ResponseEntity<?> modifyAccountUser(
-      @RequestBody @Validated AccountUserModifyRequestDTO accountUserModifyRequestDTO
+      @RequestBody @Validated ModifyAccountUserRequestDTO accountUserModifyRequestDTO
       , @AuthenticationPrincipal TokenAccountUserInfo accountUserInfo
       , BindingResult result
   ) {
@@ -76,7 +76,7 @@ public class AccountUserController {
       if (validatedResult != null) {  // valid 검증을 했을때 에러가 있는지 확인
         return ResponseEntity.badRequest().body(validatedResult);
       }
-      AccountUserModifyResponseDTO accountUserModifyResponseDTO
+      ModifyAccountUserResponseDTO accountUserModifyResponseDTO
           = accountUserService.accountUserModify(accountUserModifyRequestDTO, accountUserInfo);
 
       return ResponseEntity.ok().body(accountUserModifyResponseDTO);
@@ -86,7 +86,7 @@ public class AccountUserController {
   // 회원 정보 삭제
   @DeleteMapping("/delete")
   public ResponseEntity<?> deleteAccountUser(
-      @RequestBody @Validated AccountUserDeleteRequestDTO accountUserDeleteRequestDTO
+      @RequestBody @Validated DeleteAccountUserRequestDTO accountUserDeleteRequestDTO
       , @AuthenticationPrincipal TokenAccountUserInfo accountUserInfo
       , BindingResult result
       ) {

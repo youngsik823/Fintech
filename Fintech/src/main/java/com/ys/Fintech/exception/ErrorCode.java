@@ -23,13 +23,16 @@ public enum ErrorCode {
   // 잘못된 서버 요청
 
   // Request dto 로 데이터가 전달되지 않을 경우
-  MISSING_REQUEST_DTO_ERROR(HttpStatus.NOT_FOUND, "A-001", "DTO 값이 없습니다."),
+  MISSING_REQUEST_DTO_ERROR(HttpStatus.NOT_FOUND, "I-001", "DTO 값이 없습니다."),
 
   // ACCOUNT_USER
   EXISTS_USER_EMAIL_OR_PHONE_NUM(HttpStatus.BAD_REQUEST, "U-001", "이메일 또는 핸드폰번호가 존재합니다."),
   NOT_EXISTS_USER_EMAIL(HttpStatus.NOT_FOUND, "U-002", "이메일이 존재하지 않습니다."),
   NOT_ACCORD_USER_PASSWORD(HttpStatus.NOT_FOUND, "U-003", "패스워드가 일치하지 않습니다."),
-  NOT_EXISTS_USER(HttpStatus.NOT_FOUND, "U-004", "회원이 존재하지 않습니다.");
+  NOT_EXISTS_USER(HttpStatus.NOT_FOUND, "U-004", "회원이 존재하지 않습니다."),
+
+  // ACCOUNT
+  EXCEED_ACCOUNT_NUM(HttpStatus.BAD_REQUEST, "A-001", "이미 계정이 5개 존재합니다.");
 
 
   private final HttpStatus httpStatus;

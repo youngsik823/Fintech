@@ -1,6 +1,7 @@
 package com.ys.Fintech.accountUser.domain;
 
 import com.ys.Fintech.BaseEntity;
+import com.ys.Fintech.account.domain.Account;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
@@ -8,6 +9,8 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -21,7 +24,7 @@ import java.util.List;
 public class AccountUser extends BaseEntity implements UserDetails {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-//  @Column(name = "account_user_id")
+  @Column(name = "account_user_id")
   private Long id;
 
   @Email
@@ -42,6 +45,8 @@ public class AccountUser extends BaseEntity implements UserDetails {
   @ColumnDefault("'USER'")
   private Role role;
 
+  @OneToMany(mappedBy = "accountUser")
+  List<Account> accounts = new ArrayList<Account>();
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {

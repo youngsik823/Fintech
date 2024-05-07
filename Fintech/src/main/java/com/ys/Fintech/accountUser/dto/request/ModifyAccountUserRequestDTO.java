@@ -12,7 +12,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AccountUserModifyRequestDTO {
+public class ModifyAccountUserRequestDTO {
 
   @NotBlank
   @Size(min = 1, max = 10)
@@ -24,7 +24,7 @@ public class AccountUserModifyRequestDTO {
 
   private Role role;
 
-  public AccountUser modifyAccountUser(AccountUser accountUser, AccountUserModifyRequestDTO accountUserModifyRequestDTO) {
+  public AccountUser modifyAccountUser(AccountUser accountUser, ModifyAccountUserRequestDTO accountUserModifyRequestDTO) {
     return AccountUser.builder()
         .id(accountUser.getId())
         .email(accountUser.getEmail())

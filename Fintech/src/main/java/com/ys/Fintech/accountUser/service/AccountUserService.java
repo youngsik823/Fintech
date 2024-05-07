@@ -1,11 +1,12 @@
 package com.ys.Fintech.accountUser.service;
 
+import com.ys.Fintech.account.repository.AccountRepository;
 import com.ys.Fintech.accountUser.domain.AccountUser;
-import com.ys.Fintech.accountUser.dto.request.AccountUserDeleteRequestDTO;
-import com.ys.Fintech.accountUser.dto.request.AccountUserModifyRequestDTO;
+import com.ys.Fintech.accountUser.dto.request.DeleteAccountUserRequestDTO;
+import com.ys.Fintech.accountUser.dto.request.ModifyAccountUserRequestDTO;
 import com.ys.Fintech.accountUser.dto.request.SignInRequestDTO;
 import com.ys.Fintech.accountUser.dto.request.SignUpRequestDTO;
-import com.ys.Fintech.accountUser.dto.response.AccountUserModifyResponseDTO;
+import com.ys.Fintech.accountUser.dto.response.ModifyAccountUserResponseDTO;
 import com.ys.Fintech.accountUser.dto.response.SignInResponseDTO;
 import com.ys.Fintech.accountUser.dto.response.SignUpResponseDTO;
 import com.ys.Fintech.accountUser.repository.AccountUserRepository;
@@ -30,6 +31,7 @@ public class AccountUserService implements UserDetailsService {
   private final AccountUserRepository accountUserRepository;
   private final PasswordEncoder encoder;
   private final TokenProvider tokenProvider;
+  private final AccountRepository accountRepository;
 
   @Override
   public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
@@ -74,18 +76,18 @@ public class AccountUserService implements UserDetailsService {
   }
 
   // 회원 정보 수정 (이름, 전화번호)
-  public AccountUserModifyResponseDTO accountUserModify(AccountUserModifyRequestDTO accountUserModifyRequestDTO, TokenAccountUserInfo accountUserInfo) {
+  public ModifyAccountUserResponseDTO accountUserModify(ModifyAccountUserRequestDTO accountUserModifyRequestDTO, TokenAccountUserInfo accountUserInfo) {
 
     AccountUser accountUser = accountUserRepository.findById(accountUserInfo.getId()).orElseThrow(
         () -> new CustomException(ErrorCode.NOT_EXISTS_USER));
     AccountUser modifyAccountUser = accountUserModifyRequestDTO.modifyAccountUser(accountUser, accountUserModifyRequestDTO);
     AccountUser save = accountUserRepository.save(modifyAccountUser);
-    return new AccountUserModifyResponseDTO(save);
+    return new ModifyAccountUserResponseDTO(save);
   }
 
 
   // 회원 정보 삭제
-  public boolean accountUserDelete(AccountUserDeleteRequestDTO accountUserDeleteRequestDTO, TokenAccountUserInfo accountUserInfo) {
+  public boolean accountUserDelete(DeleteAccountUserRequestDTO accountUserDeleteRequestDTO, TokenAccountUserInfo accountUserInfo) {
 
     AccountUser accountUser = accountUserRepository.findById(accountUserInfo.getId()).orElseThrow(
         () -> new CustomException(ErrorCode.NOT_EXISTS_USER));

@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AccountUserModifyResponseDTO {
+public class ModifyAccountUserResponseDTO {
 
   private String email;
 
@@ -20,7 +20,7 @@ public class AccountUserModifyResponseDTO {
 
   private Role role;
 
-  public AccountUserModifyResponseDTO(AccountUser accountUser) {
+  public ModifyAccountUserResponseDTO(AccountUser accountUser) {
     this.email = accountUser.getEmail();
     this.name = accountUser.getName();
     this.role = accountUser.getRole();
