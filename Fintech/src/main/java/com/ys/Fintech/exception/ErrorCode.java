@@ -29,11 +29,13 @@ public enum ErrorCode {
   EXISTS_USER_EMAIL_OR_PHONE_NUM(HttpStatus.BAD_REQUEST, "U-001", "이메일 또는 핸드폰번호가 존재합니다."),
   NOT_EXISTS_USER_EMAIL(HttpStatus.NOT_FOUND, "U-002", "이메일이 존재하지 않습니다."),
   NOT_ACCORD_USER_PASSWORD(HttpStatus.NOT_FOUND, "U-003", "패스워드가 일치하지 않습니다."),
-  NOT_EXISTS_USER(HttpStatus.NOT_FOUND, "U-004", "회원이 존재하지 않습니다."),
+  NOT_ACCORD_USER_EMAIL(HttpStatus.NOT_FOUND, "U-004", "이메일이 일치하지 않습니다."),
+  NOT_EXISTS_USER(HttpStatus.NOT_FOUND, "U-005", "회원이 존재하지 않습니다."),
 
   // ACCOUNT
-  EXCEED_ACCOUNT_NUM(HttpStatus.BAD_REQUEST, "A-001", "이미 계정이 5개 존재합니다.");
-
+  EXCEED_ACCOUNT_NUM(HttpStatus.BAD_REQUEST, "A-001", "이미 계좌가 5개 존재합니다."),
+  NOT_EXISTS_ACCOUNT(HttpStatus.NOT_FOUND, "A-002", "계좌가 존재하지 않습니다."),
+  EXISTS_ACCOUNT_AMOUNT(HttpStatus.BAD_REQUEST, "A-003", "잔액이 남아 있습니다.");
 
   private final HttpStatus httpStatus;
   private final String code;
