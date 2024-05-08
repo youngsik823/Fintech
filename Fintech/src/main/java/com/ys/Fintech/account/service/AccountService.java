@@ -85,7 +85,11 @@ public class AccountService {
     if (account.getAccountAmount() > 0) { // 잔액이 남아있을 경우
       throw new CustomException(ErrorCode.EXISTS_ACCOUNT_AMOUNT);
     }
-    Account save = accountRepository.save(Account.builder()
+    if (account.getAccountStatus().equals(AccountStatus.UN_USED)) {
+      throw new CustomException(ErrorCode.ALREADY_ACCOUNT_STATUS_UN_USED);
+    }
+
+    accountRepository.save(Account.builder()
         .accountId(account.getAccountId())
         .accountUser(account.getAccountUser())
         .accountBank(account.getAccountBank())

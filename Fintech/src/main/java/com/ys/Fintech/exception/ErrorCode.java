@@ -35,7 +35,8 @@ public enum ErrorCode {
   // ACCOUNT
   EXCEED_ACCOUNT_NUM(HttpStatus.BAD_REQUEST, "A-001", "이미 계좌가 5개 존재합니다."),
   NOT_EXISTS_ACCOUNT(HttpStatus.NOT_FOUND, "A-002", "계좌가 존재하지 않습니다."),
-  EXISTS_ACCOUNT_AMOUNT(HttpStatus.BAD_REQUEST, "A-003", "잔액이 남아 있습니다.");
+  EXISTS_ACCOUNT_AMOUNT(HttpStatus.BAD_REQUEST, "A-003", "잔액이 남아 있습니다."),
+  ALREADY_ACCOUNT_STATUS_UN_USED(HttpStatus.BAD_REQUEST, "A-004", "계좌가 이미 삭제 상태입니다.");
 
   private final HttpStatus httpStatus;
   private final String code;
