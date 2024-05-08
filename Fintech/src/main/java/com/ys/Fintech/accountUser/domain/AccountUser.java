@@ -1,14 +1,18 @@
 package com.ys.Fintech.accountUser.domain;
 
+import com.ys.Fintech.BaseEntity;
+import com.ys.Fintech.account.domain.Account;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -17,7 +21,7 @@ import java.time.LocalDateTime;
 @Builder
 @Entity
 @DynamicInsert
-public class AccountUser {
+public class AccountUser extends BaseEntity implements UserDetails {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "account_user_id")
@@ -41,9 +45,36 @@ public class AccountUser {
   @ColumnDefault("'USER'")
   private Role role;
 
-  @CreationTimestamp
-  private LocalDateTime createdAt;
+  @OneToMany(mappedBy = "accountUser", cascade = CascadeType.REMOVE)
+  List<Account> accounts = new ArrayList<Account>();
 
-  @UpdateTimestamp
-  private LocalDateTime updatedAt;
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    return List.of();
+  }
+
+  @Override
+  public String getUsername() {
+    return "";
+  }
+
+  @Override
+  public boolean isAccountNonExpired() {
+    return false;
+  }
+
+  @Override
+  public boolean isAccountNonLocked() {
+    return false;
+  }
+
+  @Override
+  public boolean isCredentialsNonExpired() {
+    return false;
+  }
+
+  @Override
+  public boolean isEnabled() {
+    return false;
+  }
 }

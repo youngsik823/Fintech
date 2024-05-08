@@ -24,3 +24,8 @@ spring:
 
   jwt:
     secret: eW91bmdzaWstc3ByaW5nLWJvb3Qtc3RvcmV0YWJsZXJlc2VydmF0aW9uc2VydmljZS1wcm9qZWN0LXR1dG9yaWFsLWp3dC1zZWNyZXQta2V5Cg==
+
+logging:
+  level:
+    org:
+      springframework=DEBUG:

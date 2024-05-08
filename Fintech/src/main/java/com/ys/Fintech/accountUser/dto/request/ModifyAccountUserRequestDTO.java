@@ -2,30 +2,17 @@ package com.ys.Fintech.accountUser.dto.request;
 
 import com.ys.Fintech.accountUser.domain.AccountUser;
 import com.ys.Fintech.accountUser.domain.Role;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import lombok.extern.slf4j.Slf4j;
-
 
 @Getter
-@ToString
 @EqualsAndHashCode
-@AllArgsConstructor
+@ToString
 @NoArgsConstructor
-@Setter
-@Slf4j
-
-public class SignUpRequestDTO {
-
-  @NotBlank
-  @Email
-  private String email;
-
-  @NotBlank
-  @Size(min = 4, max = 20)
-  private String password;
+@AllArgsConstructor
+@Builder
+public class ModifyAccountUserRequestDTO {
 
   @NotBlank
   @Size(min = 1, max = 10)
@@ -37,15 +24,14 @@ public class SignUpRequestDTO {
 
   private Role role;
 
-
-
-  public AccountUser toEntity() {
+  public AccountUser modifyAccountUser(AccountUser accountUser, ModifyAccountUserRequestDTO accountUserModifyRequestDTO) {
     return AccountUser.builder()
-        .email(this.email)
-        .password(this.password)
-        .name(this.name)
-        .phoneNum(this.phoneNum)
-        .role(this.role)
+        .id(accountUser.getId())
+        .email(accountUser.getEmail())
+        .password(accountUser.getPassword())
+        .phoneNum(accountUserModifyRequestDTO.getPhoneNum())
+        .role(accountUserModifyRequestDTO.getRole())
+        .name(accountUserModifyRequestDTO.getName())
         .build();
   }
 }

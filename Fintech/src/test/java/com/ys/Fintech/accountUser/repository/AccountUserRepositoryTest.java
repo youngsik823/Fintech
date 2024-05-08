@@ -26,7 +26,7 @@ class AccountUserRepositoryTest {
   void existsEmailOrdPhoneNum() {
     try {
       SignUpRequestDTO signUpRequestDTO = new SignUpRequestDTO("young@naver.com", "dudtlr123", "윤영식", "01012345678", Role.USER);
-      accountUserService.SignUp(signUpRequestDTO);
+      accountUserService.signUp(signUpRequestDTO);
       boolean exists = accountUserRepository.existsByEmailOrPhoneNum("young@naver.com", "01012345678");
       assertTrue(exists);
     } catch (Exception e) {
