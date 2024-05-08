@@ -5,6 +5,8 @@ import com.ys.Fintech.account.domain.AccountBank;
 import com.ys.Fintech.account.domain.AccountStatus;
 import com.ys.Fintech.account.dto.request.DeleteAccountRequestDTO;
 import com.ys.Fintech.account.dto.response.CreateAccountResponseDTO;
+import com.ys.Fintech.account.dto.response.GetAccountListResponseDTO;
+import com.ys.Fintech.account.dto.response.GetAccountResponseDTO;
 import com.ys.Fintech.account.repository.AccountRepository;
 import com.ys.Fintech.accountUser.domain.AccountUser;
 import com.ys.Fintech.accountUser.repository.AccountUserRepository;
@@ -18,10 +20,10 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -32,12 +34,11 @@ public class AccountService {
   private final AccountUserRepository accountUserRepository;
   private final PasswordEncoder encoder;
 
-  // 계정 생성
+  // 계좌 생성
   public CreateAccountResponseDTO createAccount(TokenAccountUserInfo accountUserInfo) {
     AccountUser accountUser = accountUserRepository.findById(accountUserInfo.getId())
         .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXISTS_USER));
     Long accountCount = accountRepository.countByAccountUser(accountUser);
-
     if (accountCount >= 5) {  // 계정이 5개 존재하면 예외처리
       throw new CustomException(ErrorCode.EXCEED_ACCOUNT_NUM);
     }
@@ -69,7 +70,7 @@ public class AccountService {
     return CreateAccountResponseDTO.toEntity(account);
   }
 
-  // 계정 상태 UN_USED 바꾸고 저장
+  // 계좌 상태 UN_USED 바꾸고 저장
   public boolean deleteAccount(DeleteAccountRequestDTO deleteAccountRequestDTO, TokenAccountUserInfo accountUserInfo) {
     AccountUser accountUser = accountUserRepository.findById(accountUserInfo.getId())
         .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXISTS_USER));
@@ -102,7 +103,7 @@ public class AccountService {
     return true;
   }
 
-  // 계정 식제
+  // 계좌 식제
   @Async
   @Scheduled(cron = "0 0 0 * * *")   // 매일 자정에 실행
   public void AutomaticDelete() {  // 일정 기간이 지나면 자동 삭제
@@ -110,5 +111,20 @@ public class AccountService {
     for (Account account : unUsedAccounts) {
       accountRepository.delete(account);
     }
+  }
+
+  // 계좌 조회
+  public GetAccountListResponseDTO getAccount(TokenAccountUserInfo accountUserInfo) {
+    AccountUser accountUser = accountUserRepository.findById(accountUserInfo.getId())
+        .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXISTS_USER));
+    List<Account> accounts = accountRepository.findByAccountUserAndAccountStatusOrderByCreatedAtDesc(accountUser, AccountStatus.USED) // userId와 AccountStatus.USED 가 맞을경우 최신 순으로 조회
+        .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXISTS_ACCOUNT));
+    List<GetAccountResponseDTO> accountList = accounts.stream()
+        .map(GetAccountResponseDTO::new)  // account -> new GetAccountResponseDTO(account) Account 를 getAccountResponseDTO 로 변환
+        .collect(Collectors.toList());  // 리스트로 정렬
+
+    return GetAccountListResponseDTO.builder()
+        .accountList(accountList)
+        .build();
   }
 }
