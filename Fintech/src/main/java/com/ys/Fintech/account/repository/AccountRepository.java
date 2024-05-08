@@ -15,4 +15,8 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
   List<Account> findByAccountStatusAndDeletedAtBefore(AccountStatus accountStatus, LocalDateTime localDateTime);  // 삭제된 계좌와 지정한 기간이 지난 데이터 조회
   Optional<List<Account>> findByAccountUserAndAccountStatusOrderByCreatedAtDesc(AccountUser accountUser, AccountStatus status); // 사용하는 계좌을 최신순으로 조회
+
+  Optional<Account> findByAccountNumAndAccountStatus(String remittanceAccount, AccountStatus accountStatus);
+
+  Optional<Account> findByAccountIdAndAccountStatus(Long accountId, AccountStatus accountStatus);
 }
