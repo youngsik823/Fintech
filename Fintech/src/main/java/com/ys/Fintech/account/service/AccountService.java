@@ -106,6 +106,9 @@ public class AccountService {
   @Async
   @Scheduled(cron = "0 0 0 * * *")   // 매일 자정에 실행
   public void AutomaticDelete() {  // 일정 기간이 지나면 자동 삭제
-    accountRepository.findByAccountStatusAndDeletedAtBefore(AccountStatus.UN_USED, LocalDateTime.now().minusDays(1));  // 30일 전 데이터 조회하고 계정 상태가 UN_USED면 삭제
+    List<Account> unUsedAccounts = accountRepository.findByAccountStatusAndDeletedAtBefore(AccountStatus.UN_USED, LocalDateTime.now().minusMonths(1));// 한달 전 데이터 조회하고 계정 상태가 UN_USED면 삭제
+    for (Account account : unUsedAccounts) {
+      accountRepository.delete(account);
+    }
   }
 }
