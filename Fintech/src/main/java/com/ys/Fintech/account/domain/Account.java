@@ -2,14 +2,18 @@ package com.ys.Fintech.account.domain;
 
 import com.ys.Fintech.BaseEntity;
 import com.ys.Fintech.accountUser.domain.AccountUser;
+import com.ys.Fintech.transaction.domain.Transaction;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(exclude = {"accountUser"})
@@ -45,5 +49,8 @@ public class Account extends BaseEntity {
 
   @Column(name = "deleted_at")
   private LocalDateTime deletedAt;
+
+  @OneToMany(mappedBy = "account", cascade = CascadeType.REMOVE)
+  List<Transaction> transactions= new ArrayList<Transaction>();
 
 }

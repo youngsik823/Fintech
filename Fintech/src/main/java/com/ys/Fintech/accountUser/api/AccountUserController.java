@@ -68,8 +68,8 @@ public class AccountUserController {
   @RequestMapping(value = "/modify", method = {RequestMethod.PUT, RequestMethod.PATCH})
   public ResponseEntity<?> modifyAccountUser(
       @RequestBody @Validated ModifyAccountUserRequestDTO accountUserModifyRequestDTO
-      , @AuthenticationPrincipal TokenAccountUserInfo accountUserInfo
       , BindingResult result
+      , @AuthenticationPrincipal TokenAccountUserInfo accountUserInfo
   ) {
 
       List<FieldError> validatedResult = FieldErrorResponse.getValidatedResult(result);
@@ -87,8 +87,8 @@ public class AccountUserController {
   @DeleteMapping("/delete")
   public ResponseEntity<?> deleteAccountUser(
       @RequestBody @Validated DeleteAccountUserRequestDTO accountUserDeleteRequestDTO
-      , @AuthenticationPrincipal TokenAccountUserInfo accountUserInfo
       , BindingResult result
+      , @AuthenticationPrincipal TokenAccountUserInfo accountUserInfo
       ) {
 
       List<FieldError> validatedResult = FieldErrorResponse.getValidatedResult(result);
