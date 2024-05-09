@@ -9,7 +9,7 @@ import lombok.*;
 @ToString
 @EqualsAndHashCode
 @Builder
-public class DepositTransactionRequestDTO {
+public class WithdrawTransactionRequestDTO {
 
   @NotBlank
   @Size(min = 4, max = 20)
@@ -22,9 +22,6 @@ public class DepositTransactionRequestDTO {
   @Min(value = 1, message = "최소 1원부터 입금 하실 수 있습니다.")
   @Max(value = 10000000, message = "최대 1000만원까지 입급 하실 수 있습니다.")
   private Long transactionAmount; // 거래 액수
-
-  @NotBlank
-  private String depositWithdrawAccount;  // 입출금 계좌
 
 
 }

@@ -25,14 +25,7 @@ public class WebSecurityConfig {
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(
             authorize -> authorize
-                .requestMatchers("/api/v1/accountUser/signUp"
-                    , "/api/v1/accountUser/signIn"
-                ,"/api/v1/accountUser/modify"
-                ,"/api/v1/accountUser/delete"
-                ,"/api/v1/account/create"
-                ,"/api/v1/account/delete"
-                ,"/api/v1/account/myAccount"
-                ,"/api/v1/transaction/remittance").permitAll()
+                .requestMatchers("/api/v1/accountUser/signUp", "/api/v1/accountUser/signIn").permitAll()
                 .anyRequest().authenticated()
         )
         .httpBasic(Customizer.withDefaults())

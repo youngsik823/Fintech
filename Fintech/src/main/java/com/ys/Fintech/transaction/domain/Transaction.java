@@ -33,11 +33,11 @@ public class Transaction extends BaseEntity {
   @Column(name = "transaction_amount", nullable = false)
   private Long transactionAmount; // 거래된 돈
 
-  @Column(name = "remittance_name")
-  private String remittanceName;  // 송금자 이름
+  @Column(name = "deposit_withdraw_name")
+  private String depositWithdrawName;  // 입출금자 이름
 
-  @Column(name = "remittance_account")
-  private String remittanceAccount;  // 송금 계좌
+  @Column(name = "deposit_withdraw_account")
+  private String depositWithdrawAccount;  // 입출금 계좌
 
   @Column(name = "received_name")
   private String receivedName;  // 받은사람 이름
