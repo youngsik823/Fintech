@@ -1,6 +1,5 @@
 package com.ys.Fintech.transaction.dto.request;
 
-import com.ys.Fintech.transaction.domain.TransactionType;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -10,7 +9,7 @@ import lombok.*;
 @ToString
 @EqualsAndHashCode
 @Builder
-public class RemittanceTransactionRequestDTO {
+public class DepositTransactionRequestDTO {
 
   @NotBlank
   @Size(min = 4, max = 20)
@@ -20,8 +19,8 @@ public class RemittanceTransactionRequestDTO {
   private Long accountId;
 
   @NotNull
-  @Min(1)
-  @Max(10000000)
+  @Min(value = 1, message = "최소 1원부터 입금 하실 수 있습니다.")
+  @Max(value = 10000000, message = "최대 1000만원까지 입급 하실 수 있습니다.")
   private Long transactionAmount;
 
   @NotBlank

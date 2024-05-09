@@ -37,8 +37,8 @@ public class AccountController {
   @DeleteMapping("/delete")
   public ResponseEntity<?> deleteAccount(
       @RequestBody @Validated DeleteAccountRequestDTO deleteAccountRequestDTO,
-      @AuthenticationPrincipal TokenAccountUserInfo accountUserInfo,
-      BindingResult result
+      BindingResult result,
+      @AuthenticationPrincipal TokenAccountUserInfo accountUserInfo
   ) {
     List<FieldError> validatedResult = FieldErrorResponse.getValidatedResult(result);
     if (validatedResult != null) {

@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @ToString
 @EqualsAndHashCode
 @Builder
-public class RemittanceTransactionResponseDTO {
+public class DepositTransactionResponseDTO {
 
   private TransactionType transactionType;
 
@@ -26,8 +26,8 @@ public class RemittanceTransactionResponseDTO {
 
   private String remittanceAccount;
 
-  public static RemittanceTransactionResponseDTO toEntity(Transaction transaction) {
-    return RemittanceTransactionResponseDTO.builder()
+  public static DepositTransactionResponseDTO toEntity(Transaction transaction) {
+    return DepositTransactionResponseDTO.builder()
         .transactionType(TransactionType.DEPOSIT)
         .transactionAmount(transaction.getTransactionAmount())
         .remittanceName(transaction.getRemittanceName())

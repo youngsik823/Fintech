@@ -10,8 +10,8 @@ import com.ys.Fintech.exception.ErrorCode;
 import com.ys.Fintech.security.TokenAccountUserInfo;
 import com.ys.Fintech.transaction.domain.Transaction;
 import com.ys.Fintech.transaction.domain.TransactionType;
-import com.ys.Fintech.transaction.dto.request.RemittanceTransactionRequestDTO;
-import com.ys.Fintech.transaction.dto.response.RemittanceTransactionResponseDTO;
+import com.ys.Fintech.transaction.dto.request.DepositTransactionRequestDTO;
+import com.ys.Fintech.transaction.dto.response.DepositTransactionResponseDTO;
 import com.ys.Fintech.transaction.repository.TransactionRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -31,39 +31,39 @@ public class TransactionService {
   private final TransactionRepository transactionRepository;
   private final PasswordEncoder encoder;
 
-  public RemittanceTransactionResponseDTO remittanceTransaction(RemittanceTransactionRequestDTO remittanceTransactionRequestDTO, TokenAccountUserInfo accountUserInfo) {
+  public DepositTransactionResponseDTO depositTransaction(DepositTransactionRequestDTO depositTransactionRequestDTO, TokenAccountUserInfo accountUserInfo) {
     AccountUser accountUser = accountUserRepository.findById(accountUserInfo.getId())
         .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXISTS_USER));
     String encodedPassword = accountUser.getPassword();
-    if (!encoder.matches(remittanceTransactionRequestDTO.getPassword(), encodedPassword)) {
+    if (!encoder.matches(depositTransactionRequestDTO.getPassword(), encodedPassword)) {
       throw new CustomException(ErrorCode.NOT_ACCORD_USER_PASSWORD);
     }
-    Account account = accountRepository.findByAccountIdAndAccountStatus(remittanceTransactionRequestDTO.getAccountId(), AccountStatus.USED)
+    Account account = accountRepository.findByAccountIdAndAccountStatus(depositTransactionRequestDTO.getAccountId(), AccountStatus.USED) // 본인 계좌
         .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXISTS_ACCOUNT));
-    if (account.getAccountAmount() == 0 || account.getAccountAmount() < remittanceTransactionRequestDTO.getTransactionAmount()) { // 거래 잔액이 부족할때
+    if (account.getAccountAmount() == 0 || account.getAccountAmount() < depositTransactionRequestDTO.getTransactionAmount()) { // 거래 잔액이 부족할때
       throw new CustomException(ErrorCode.NOT_ENOUGH_AMOUNT);
     }
-    account.setAccountAmount(account.getAccountAmount() - remittanceTransactionRequestDTO.getTransactionAmount());
+    account.setAccountAmount(account.getAccountAmount() - depositTransactionRequestDTO.getTransactionAmount());
     accountRepository.save(account);
-    Account receivedAccount = accountRepository.findByAccountNumAndAccountStatus(remittanceTransactionRequestDTO.getRemittanceAccount(), AccountStatus.USED)
+    Account receivedAccount = accountRepository.findByAccountNumAndAccountStatus(depositTransactionRequestDTO.getRemittanceAccount(), AccountStatus.USED)  // 상대방 계좌
         .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXISTS_ACCOUNT));
 
-    receivedAccount.setAccountAmount(receivedAccount.getAccountAmount() + remittanceTransactionRequestDTO.getTransactionAmount());
+    receivedAccount.setAccountAmount(receivedAccount.getAccountAmount() + depositTransactionRequestDTO.getTransactionAmount());
     accountRepository.save(receivedAccount);
 
     Transaction save = transactionRepository.save(
         Transaction.builder()
             .account(account)
-            .transactionType(TransactionType.REMITTANCE)
-            .transactionAmount(remittanceTransactionRequestDTO.getTransactionAmount())
+            .transactionType(TransactionType.DEPOSIT)
+            .transactionAmount(depositTransactionRequestDTO.getTransactionAmount())
             .remittanceName(account.getAccountUser().getName())
             .receivedName(receivedAccount.getAccountUser().getName())
-            .remittanceAccount(remittanceTransactionRequestDTO.getRemittanceAccount())
+            .remittanceAccount(depositTransactionRequestDTO.getRemittanceAccount())
             .transactedAt(LocalDateTime.now())
             .build()
     );
 
 
-    return RemittanceTransactionResponseDTO.toEntity(save);
+    return DepositTransactionResponseDTO.toEntity(save);
   }
 }

@@ -26,6 +26,7 @@ public class Transaction extends BaseEntity {
   @JoinColumn(name = "account_id")
   private Account account;
 
+  @Enumerated(EnumType.STRING)
   @Column(name = "transaction_type", nullable = false)  // 거래 타입
   private TransactionType transactionType;
 
